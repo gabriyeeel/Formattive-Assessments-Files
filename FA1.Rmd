@@ -2,7 +2,7 @@
 title: "Formative Assessment 1"
 author: "Gabriel Tagaytay"
 date: "2025-02-02"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -112,4 +112,6 @@ boxplot(Score ~ Gender, data = data,
         xlab = "Gender", ylab = "Score",
         col = c("lightblue", "lightpink"))
 ```
+
+<https://github.com/gabriyeeel/FA1.git>
 
