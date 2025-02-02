@@ -1,0 +1,115 @@
+---
+title: "Formative Assessment 1"
+author: "Gabriel Tagaytay"
+date: "2025-02-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**1. Write the skewness program, and use it to calculate the skewness coefficient of the four examination subjects in results.txt (results.csv). What can you say about these data?**  
+
+* **Reading the Data**  
+```{r}
+data <- read.table("results.txt", header = TRUE)
+head(data)
+```
+
+The data provides insights into students' performance in four examinations. Analyzing this data, the skewness values, we can determine if the scores of the students are more densed in lower or higher values. Having a positive skewness means that most student scored lower, which means, it is more challenging for them. In the opposite way, having a negative skewness means that many students scored high, which means, the examination was easier for them. But, if the skewness values are closed to zero, it means that the distribution is nearly symmetrical and the scores are evenly spread.  
+
+* **Statistical Analysis (Mean, Median, and Standard Deviation)**  
+```{r}
+mean_arch1 <- mean(data$Arch1, na.rm = TRUE)
+median_arch1 <- median(data$Arch1, na.rm = TRUE)
+sd_arch1 <- sd(data$Arch1, na.rm = TRUE)
+
+mean_prog1 <- mean(data$Prog1, na.rm = TRUE)
+median_prog1 <- median(data$Prog1, na.rm = TRUE)
+sd_prog1 <- sd(data$Prog1, na.rm = TRUE)
+
+mean_arch2 <- mean(data$Arch2, na.rm = TRUE)
+median_arch2 <- median(data$Arch2, na.rm = TRUE)
+sd_arch2 <- sd(data$Arch2, na.rm = TRUE)
+
+mean_prog2 <- mean(data$Prog2, na.rm = TRUE)
+median_prog2 <- median(data$Prog2, na.rm = TRUE)
+sd_prog2 <- sd(data$Prog2, na.rm = TRUE)
+```
+
+* **Printing results**  
+```{r}
+cat("Arch1: Mean =", mean_arch1, ", Median =", median_arch1, ", SD =", sd_arch1, "\n")
+cat("Prog1: Mean =", mean_prog1, ", Median =", median_prog1, ", SD =", sd_prog1, "\n")
+cat("Arch2: Mean =", mean_arch2, ", Median =", median_arch2, ", SD =", sd_arch2, "\n")
+cat("Prog2: Mean =", mean_prog2, ", Median =", median_prog2, ", SD =", sd_prog2, "\n")
+```
+
+* **Histograms**  
+```{r}
+hist(data$Arch1, main="Histogram of Arch1", xlab="Scores", col="blue", border="black")
+hist(data$Prog1, main="Histogram of Prog1", xlab="Scores", col="green", border="black")
+hist(data$Arch2, main="Histogram of Arch2", xlab="Scores", col="red", border="black")
+hist(data$Prog2, main="Histogram of Prog2", xlab="Scores", col="purple", border="black")
+```
+
+* **Boxplot**  
+```{r}
+boxplot(data$Arch1, main="Boxplot of Arch1", ylab="Scores", col="blue")
+boxplot(data$Prog1, main="Boxplot of Prog1", ylab="Scores", col="green")
+boxplot(data$Arch2, main="Boxplot of Arch2", ylab="Scores", col="red")
+boxplot(data$Prog2, main="Boxplot of Prog2", ylab="Scores", col="purple")
+```
+
+* **Skewness Calculation**  
+```{r}
+skewness_arch1 <- (3 * (mean_arch1 - median_arch1)) / sd_arch1
+skewness_prog1 <- (3 * (mean_prog1 - median_prog1)) / sd_prog1
+skewness_arch2 <- (3 * (mean_arch2 - median_arch2)) / sd_arch2
+skewness_prog2 <- (3 * (mean_prog2 - median_prog2)) / sd_prog2
+```
+
+* **Print Skewness**  
+```{r}
+cat("Skewness of Arch1:", skewness_arch1, "\n")
+cat("Skewness of Prog1:", skewness_prog1, "\n")
+cat("Skewness of Arch2:", skewness_arch2, "\n")
+cat("Skewness of Prog2:", skewness_prog2, "\n")
+```  
+
+**QUESTION: Is it a reasonable approximation?**  
+- Although Pearson's Skewness provides simple yet convenient way to estimate skewness because it can provide quick understanding for data's symmetry especially when working in large datasets, still, it is not as accurate as other methods like Fisher's Skewness coefficient, which takes into account the third moment of distributions. If there will be an extreme skewness, Pearson's Skewness is not reliable.
+
+**2. For the class of 50 students of computing detailed in Exercise 1.1, use R to**  
+**(a)  form the stem-and-leaf display for each gender, and discuss the advantages of this representation compared to the traditional histogram;**  
+
+* **Load Data**  
+```{r}
+data <- read.csv("no2.csv", header = TRUE)
+data$Gender <- as.factor(data$Gender)
+```
+
+* **Stem-and-Leaf Display**  
+- The stem-and-leaf plot has many advantages rather than traditional histograms. Unlike the traditional histogram, stem-and-leaf displays the exact values of dataset unlike the ranges that would make it easier to see the exact distribution of data. The stem-and-leaf plot is compact and easy to read especially for small datasets. Stem-and-leaf has numerical data or layout alone to understand the data.
+```{r stem_plot}
+# Stem-and-Leaf for Female
+cat("Stem-and-Leaf for Female:")
+stem(data$Score[data$Gender == "Female"])
+
+# Stem-and-Leaf for Male
+cat("Stem-and-Leaf for Male:")
+stem(data$Score[data$Gender == "Male"])
+```
+
+**(b)  construct a box-plot for each gender and discuss the findings.**  
+
+* **Boxplot Analysis**  
+- The boxplot shows that the median score of the female students is higher than the male students because of the average female students have. Additionally, the score of the male students shows greater variation, which means, their scores are more spread out with some students scoring very low while others achieved high marks.
+```{r boxplot}
+boxplot(Score ~ Gender, data = data, 
+        main = "Boxplot of Scores by Gender",
+        xlab = "Gender", ylab = "Score",
+        col = c("lightblue", "lightpink"))
+```
+
