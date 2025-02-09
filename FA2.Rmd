@@ -1,0 +1,98 @@
+---
+title: "FORMATIVE ASSESSMENT 2"
+author: "Gabriel Tagaytay"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**1. Use R to illustrate that the probability of getting:**  
+
+**- a head is 0.5 if a fair coin is tossed repeatedly;**  
+
+* **Simulate Coin Tosses**
+```{r}
+set.seed(123)
+n_trials <- 10000
+
+coin_tosses <- sample(c("Head", "Tail"), size = n_trials, replace = TRUE)
+```
+
+* **Calculate the probability of getting heads**  
+```{r}
+prob_heads <- sum(coin_tosses == "Head") / n_trials
+print(paste("Probability of getting a Head:", prob_heads))
+```  
+
+**- a red card is 0.5 if cards are drawn repeatedly with replacement from a well-shuffled deck;**  
+
+* **Simulate Drawing Cards**
+```{r}
+suits <- rep(c("Red", "Black"), each = 26)
+n_trials <- 10000
+
+draws <- sample(suits, size = n_trials, replace = TRUE)
+``` 
+
+* **Calculate probability of drawing a red card**  
+```{r}
+prob_red_card <- sum(draws == "Red") / n_trials
+print(paste("Probability of drawing a Red Card:", prob_red_card))
+```  
+
+**- an even number is 0.5 if a fair die is rolled repeatedly.**  
+
+* **Simulate Die Roll**  
+```{r}
+n_trials <- 10000
+die_rolls <- sample(1:6, size = n_trials, replace = TRUE)
+```
+
+* **Calculate probability of rolling an even number**  
+```{r}
+prob_even <- sum(die_rolls %% 2 == 0) / n_trials
+print(paste("Probability of rolling an Even Number:", prob_even))
+```  
+
+
+
+**2. An experiment consists of tossing two fair coins. Use R to simulate this experiment 100 times and obtain the relative frequency of each possible outcome. Hence, estimate the probability of getting one head and one tail in any order.**  
+
+* **Set seed for reproducibility**  
+```{r}
+set.seed(123)
+```
+
+* **Number of simulations**
+```{r}
+n_simulations <- 100
+```
+
+* **Simulate tossing two coins 100 times**
+```{r}
+coin1 <- sample(c("H", "T"), size = n_simulations, replace = TRUE)
+coin2 <- sample(c("H", "T"), size = n_simulations, replace = TRUE)
+```
+
+* **Combine outcomes**
+```{r}
+outcomes <- paste(coin1, coin2, sep = "")
+```
+
+* **View first few outcomes**  
+```{r}
+head(outcomes)
+```
+* **Calculate relative frequency of each outcome**  
+```{r}
+outcome_freq <- table(outcomes) / n_simulations
+print(outcome_freq)
+```
+* **Estimate the probability of getting one head and one tail (HT or TH)**  
+```{r}
+prob_one_head_one_tail <- sum(outcome_freq[c("HT", "TH")])
+print(paste("Estimated probability of getting one head and one tail:", prob_one_head_one_tail))
+```
