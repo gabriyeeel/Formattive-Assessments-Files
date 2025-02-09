@@ -96,3 +96,9 @@ print(outcome_freq)
 prob_one_head_one_tail <- sum(outcome_freq[c("HT", "TH")])
 print(paste("Estimated probability of getting one head and one tail:", prob_one_head_one_tail))
 ```
+
+
+
+
+
+[CLICK HERE TO VIEW THE R MARKDOWN FILEON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA2.Rmd)
