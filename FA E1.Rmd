@@ -1,0 +1,59 @@
+---
+title: "FA E1"
+author: "Gabriel Tagaytay"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# ALTERNATIVE ACTIVITY 
+**13. A malicious spyware can infect a computer system though the Internet or through email. The spyware comes through the Internet 70% of the time and 30% of the time, it gets in through email. If it enters via the Internet the anti-virus detector will detect it with probability 0.6, and via email, it is detected with probability 0.8.**  
+
+## Given Probabilities
+```{r}
+P_I <- 0.7 
+P_E <- 0.3 
+P_D_given_I <- 0.6 
+P_D_given_E <- 0.8  
+```
+- (a) What is the probability that this spyware infects the system?  
+```{r}
+P_Infect <- P_I * (1 - P_D_given_I) + P_E * (1 - P_D_given_E)
+cat("Probability that spyware infects the system:", P_Infect, "\n")
+```
+
+- (b) If the spyware is detected, what is the probability that it came through the Internet?
+```{r}
+P_D <- (P_D_given_I * P_I) + (P_D_given_E * P_E)
+P_I_given_D <- (P_D_given_I * P_I) / P_D
+cat("Probability that spyware came through the Internet if detected:", P_I_given_D, "\n")
+```  
+
+**14. Of the emails you receive 20% are spam on average. Your spam filter is able to detect 90% of them but also misclassifies as spam 15% of the genuine emails.**  
+
+## Given Probabilities
+```{r}
+P_S <- 0.2
+P_L <- 0.8
+P_M_given_S <- 0.9
+P_M_given_L <- 0.15
+```
+- (a) If an email arrives and is marked spam, what is the probability that it really is spam?  
+```{r}
+P_M <- (P_M_given_S * P_S) + (P_M_given_L * P_L)
+P_S_given_M <- (P_M_given_S * P_S) / P_M
+cat("Probability that a marked spam email is actually spam:", P_S_given_M, "\n")
+```
+- (b) If an email arrives and is not marked spam, what is the probability that it is legitimate?
+```{r}
+P_Mc_given_L <- 1 - P_M_given_L
+P_Mc_given_S <- 1 - P_M_given_S
+P_Mc <- (P_Mc_given_S * P_S) + (P_Mc_given_L * P_L)
+P_L_given_Mc <- (P_Mc_given_L * P_L) / P_Mc
+cat("Probability that an unmarked email is legitimate:", P_L_given_Mc, "\n")
+```
+
+[CLICK HERE TO VIEW THE R MARKDOWN FILEON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA2.Rmd)
