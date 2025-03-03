@@ -89,4 +89,6 @@ cat("E2 and E3:", independent_E2_E3, "\n")
 
 cat("\nMutual Independence:\n")
 cat("E1, E2, and E3:", mutual_independence, "\n")
-```
+```  
+
+[CLICK HERE TO VIEW THE R MARKDOWN FILEON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA4.Rmd)
