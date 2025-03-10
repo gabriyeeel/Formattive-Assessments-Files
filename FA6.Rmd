@@ -3,10 +3,10 @@ title: "FA6"
 author: "Gabriel Tagaytay"
 date: "`r Sys.Date()`"
 output:
-  html_document:
-    df_print: paged
   pdf_document:
     latex_engine: xelatex
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -45,5 +45,31 @@ cat(sprintf("Standard deviation (in 2 decimal places): %.2f\n", sd_x))
 ```{r}
 hist(x, breaks = 30, col = "lightblue", main = "Histogram of Geometric Distribution", xlab = "Number of Trials", ylab = "Frequency")
 ```
+
+# II. Hypergeometric Distribution
+## Given data
+```{r}
+total_defective_40 <- 0.1 * 40  # Number of defective chips in a box of 40
+total_defective_5000 <- 0.1 * 5000  # Number of defective chips in a box of 5000
+sample_size <- 10  # Sample size
+threshold <- 10 * 0.1  # More than 10% defectives (i.e., more than 1 defective)
+```
+
+## Compute probability for a box of 40
+```{r}
+prob_40 <- 1 - phyper(threshold, total_defective_40, 40 - total_defective_40, sample_size)
+```
+
+## Compute probability for a box of 5000
+```{r}
+prob_5000 <- 1 - phyper(threshold, total_defective_5000, 5000 - total_defective_5000, sample_size)
+```
+
+## Print results
+```{r}
+cat("Probability for a box of 40:", round(prob_40, 4) * 100, "%\n")
+cat("Probability for a box of 5000:", round(prob_5000, 4) * 100, "%\n")
+```
+
 
 [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA6.Rmd)
