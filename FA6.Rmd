@@ -1,0 +1,49 @@
+---
+title: "FA6"
+author: "Gabriel Tagaytay"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# I. Geometric Distribution  
+
+## 1. Set the probability of success
+```{r}
+p <- 0.2
+```
+
+## 2. Generate 1000 random variables from the geometric distribution
+```{r}
+set.seed(123)  # For reproducibility
+x <- rgeom(1000, prob = p) + 1  # Adding 1 since R's rgeom() gives (failures before first success)
+```
+
+## 3. Calculate basic statistics
+```{r}
+mean_x <- mean(x)
+var_x <- var(x)
+sd_x <- sd(x)
+```
+
+## 4. Print the results with specified format
+```{r}
+cat("Number of trials required to achieve first success:\n")
+cat(sprintf("Mean (in 2 decimal places): %.2f\n", mean_x))
+cat(sprintf("Variance (in 2 decimal places): %.2f\n", var_x))
+cat(sprintf("Standard deviation (in 2 decimal places): %.2f\n", sd_x))
+```
+
+## 5. Plot the histogram
+```{r}
+hist(x, breaks = 30, col = "lightblue", main = "Histogram of Geometric Distribution", xlab = "Number of Trials", ylab = "Frequency")
+```
+
+[CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA5.Rmd)
