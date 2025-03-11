@@ -67,4 +67,4 @@ most_likely <- which.max(c(P_J_given_E, P_A_given_E, P_V_given_E))
 most_likely_person <- c("Jane", "Amy", "Ava")[most_likely]
 print(paste("Most likely person to have written the erroneous program:", most_likely_person))
 ```
-[CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA6.Rmd)
+[CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA3.Rmd)
