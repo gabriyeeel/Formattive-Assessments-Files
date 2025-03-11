@@ -1,0 +1,70 @@
+---
+title: "FA3"
+author: "Gabriel Tagaytay"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 2: Binary Communication Channel
+## Given probabilities
+```{r}
+P_T0 <- 0.7  
+P_T1 <- 0.3
+P_R0_given_T0 <- 0.95
+P_R1_given_T1 <- 0.75
+P_R1_given_T0 <- 1 - P_R0_given_T0
+P_R0_given_T1 <- 1 - P_R1_given_T1
+```
+
+* **(a) Probability that a 1 was received**
+```{r}
+P_R1 <- (P_R1_given_T0 * P_T0) + (P_R1_given_T1 * P_T1)
+print(paste("P(R1) =", P_R1))
+```
+
+* **(b) Probability that a 1 was transmitted given that a 1 was received**
+```{r}
+P_T1_given_R1 <- (P_R1_given_T1 * P_T1) / P_R1
+print(paste("P(T1 | R1) =", P_T1_given_R1))
+```
+
+
+# Problem 7: Employee Errors
+## Given probabilities
+```{r}
+P_J <- 0.1
+P_A <- 0.3
+P_V <- 0.6
+P_E_given_J <- 0.08
+P_E_given_A <- 0.05
+P_E_given_V <- 0.01
+```
+
+* **(a) Overall probability of an error**
+```{r}
+P_E <- (P_E_given_J * P_J) + (P_E_given_A * P_A) + (P_E_given_V * P_V)
+print(paste("P(E) =", P_E))
+```
+
+* **(b) Probability of each person making an error given that an error occurred**
+```{r}
+P_J_given_E <- (P_E_given_J * P_J) / P_E
+P_A_given_E <- (P_E_given_A * P_A) / P_E
+P_V_given_E <- (P_E_given_V * P_V) / P_E
+
+print(paste("P(J | E) =", P_J_given_E))
+print(paste("P(A | E) =", P_A_given_E))
+print(paste("P(V | E) =", P_V_given_E))
+```
+
+## Identifying the most likely person to have written an erroneous program
+```{r}
+most_likely <- which.max(c(P_J_given_E, P_A_given_E, P_V_given_E))
+most_likely_person <- c("Jane", "Amy", "Ava")[most_likely]
+print(paste("Most likely person to have written the erroneous program:", most_likely_person))
+```
+[CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA6.Rmd)
