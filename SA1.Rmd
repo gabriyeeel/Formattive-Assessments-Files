@@ -1,0 +1,165 @@
+---
+title: "SA1"
+author: "Gabriel Tagaytay"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# PROBLEM 1
+
+```{r}
+# Function to validate input values
+validate_input <- function(x, y) {
+  if (sum(x) != 1) {
+    stop("Error: x1 + x2 + x3 must sum to 1.")
+  }
+  if (any(x < 0.10 | x > 0.40)) {
+    stop("Error: Each xi must be between 0.10 and 0.40.")
+  }
+  if (sum(y) != 0.12) {
+    stop("Error: y1 + y2 + y3 must sum to 0.12.")
+  }
+  if (any(y < 0.01 | y > 0.05)) {
+    stop("Error: Each yi must be between 0.01 and 0.05.")
+  }
+}
+
+# Function to calculate probability of selecting a defective product
+calculate_defective_prob <- function(knit_mode = FALSE) {
+  if (knit_mode) {
+    # Hardcoded values for knitting
+    x <- c(0.3, 0.3, 0.4)  # These sum to 1
+    y <- c(0.04, 0.04, 0.04)  # These sum to 0.12
+  } else {
+    cat("Enter values for x1, x2, x3 (must sum to 1, each between 0.10 and 0.40):\n")
+    x <- as.numeric(strsplit(readline(), " ")[[1]])
+    
+    cat("Enter values for y1, y2, y3 (must sum to 0.12, each between 0.01 and 0.05):\n")
+    y <- as.numeric(strsplit(readline(), " ")[[1]])
+  }
+  
+  validate_input(x, y)  # Ensure values meet the constraints
+  
+  prob_defective <- sum(x * y)  # Compute probability
+  cat("The probability of selecting a defective product is:", prob_defective, "\n")
+}
+
+# Run with predefined values when knitting
+calculate_defective_prob(knit_mode = TRUE)
+
+```
+
+# PROBLEM 2  
+
+**Univariate**
+```{r}
+calculate_univariate <- function(knit_mode = FALSE) {
+  if (knit_mode) {
+    # Hardcoded test values for knitting
+    X <- c(1, 2, 3, 4, 5)
+    P <- c(0.2, 0.3, 0.1, 0.25, 0.15)  # These sum to 1
+  } else {
+    cat("Enter values of the discrete random variable (space-separated):\n")
+    X <- as.numeric(strsplit(readline(), " ")[[1]])
+    
+    cat("Enter corresponding probabilities (must sum to 1):\n")
+    P <- as.numeric(strsplit(readline(), " ")[[1]])
+  }
+  
+  if (sum(P) != 1 || any(P < 0) || any(P > 1)) {
+    stop("Error: Probabilities must sum to 1 and be between 0 and 1.")
+  }
+  
+  mean_X <- sum(X * P)
+  var_X <- sum((X - mean_X)^2 * P)
+  
+  cat("Mean:", mean_X, "\nVariance:", var_X, "\n")
+  
+  plot(X, P, type="h", col="blue", lwd=2, main="Probability Mass Function", xlab="X", ylab="P(X)")
+}
+
+# Run in knit mode when knitting to PDF
+calculate_univariate(knit_mode = TRUE)
+
+```
+
+**For bivariate distributions, we need a matrix of probabilities:**  
+
+```{r}
+calculate_bivariate <- function(knit_mode = FALSE) {
+  if (knit_mode) {
+    # Hardcoded test values for knitting
+    X <- c(1, 2)
+    Y <- c(1, 2, 3)
+    P <- c(0.2, 0.1, 0.1, 0.2, 0.2, 0.2)  # Must sum to 1
+    
+    P_matrix <- matrix(P, nrow = length(X), byrow = TRUE)
+  } else {
+    cat("Enter values of X (space-separated):\n")
+    X <- as.numeric(strsplit(readline(), " ")[[1]])
+    
+    cat("Enter values of Y (space-separated):\n")
+    Y <- as.numeric(strsplit(readline(), " ")[[1]])
+    
+    cat("Enter joint probability matrix row-wise (space-separated, must sum to 1):\n")
+    P <- as.numeric(strsplit(readline(), " ")[[1]])
+    
+    P_matrix <- matrix(P, nrow = length(X), byrow = TRUE)
+  }
+  
+  if (sum(P_matrix) != 1 || any(P_matrix < 0) || any(P_matrix > 1)) {
+    stop("Error: Probabilities must sum to 1 and be between 0 and 1.")
+  }
+  
+  marginal_X <- rowSums(P_matrix)
+  marginal_Y <- colSums(P_matrix)
+  
+  cat("Marginal Distribution of X:\n", marginal_X, "\n")
+  cat("Marginal Distribution of Y:\n", marginal_Y, "\n")
+}
+
+# Run in knit mode when knitting to PDF
+calculate_bivariate(knit_mode = TRUE)
+
+```
+
+# PROBLEM 3
+
+```{r}
+simulate_search <- function(n = 10000, p = 0.6) {
+  results <- rgeom(n, p) + 1  # Geometric distribution simulating number of searches
+  
+  mean_X <- mean(results)
+  var_X <- var(results)
+  
+  cat("Mean of simulated distribution:", mean_X, "\n")
+  cat("Variance of simulated distribution:", var_X, "\n")
+  
+  hist(results, probability=TRUE, col="lightblue", main="Simulated PDF", xlab="Searches until Success")
+}
+
+estimate_markov_property <- function(results) {
+  prob_X_greater_3 <- mean(results > 3)
+  prob_X_eq_4_given_X_gt_3 <- mean(results == 4 & results > 3) / prob_X_greater_3
+  prob_X_eq_5_given_X_gt_3 <- mean(results == 5 & results > 3) / prob_X_greater_3
+  prob_X_eq_1 <- mean(results == 1)
+  prob_X_eq_2 <- mean(results == 2)
+  
+  cat("P(X = 4 | X > 3):", prob_X_eq_4_given_X_gt_3, "\n")
+  cat("P(X = 5 | X > 3):", prob_X_eq_5_given_X_gt_3, "\n")
+  cat("P(X = 1):", prob_X_eq_1, "\n")
+  cat("P(X = 2):", prob_X_eq_2, "\n")
+}
+
+set.seed(123)
+results <- rgeom(10000, 0.6) + 1  # Simulate
+simulate_search()
+estimate_markov_property(results)
+```  
+
+
+# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA3.Rmd)
