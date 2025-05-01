@@ -85,4 +85,4 @@ percentile_90 <- qnorm(0.90, mean = mean_downtime, sd = sd_downtime)
 cat("(2b) 90th percentile =", percentile_90, "minutes\n")
 ```  
 
-# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/SA1.Rmd)
+# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/FA8.Rmd)
