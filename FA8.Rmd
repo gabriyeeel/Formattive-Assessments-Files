@@ -1,0 +1,88 @@
+---
+title: "FA8"
+author: "Gabriel Tagaytay"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1: Signal Analysis  
+```{r}
+mean_signal <- 200
+sd_signal <- sqrt(256)  # Standard deviation = 16
+```
+
+## (a) P(X > 224)
+```{r}
+prob_a <- 1 - pnorm(224, mean = mean_signal, sd = sd_signal)
+cat("(a) P(X > 224) =", prob_a, "\n")
+```
+
+## (b) P(186 < X < 224)
+```{r}
+prob_b <- pnorm(224, mean = mean_signal, sd = sd_signal) - 
+          pnorm(186, mean = mean_signal, sd = sd_signal)
+cat("(b) P(186 < X < 224) =", prob_b, "\n")
+```
+
+## (c) 25th percentile (Q1)
+```{r}
+q1 <- qnorm(0.25, mean = mean_signal, sd = sd_signal)
+cat("(c) 25th percentile =", q1, "µV\n")
+```
+
+## (d) P(X < 240 | X > 210)
+```{r}
+numerator_d <- pnorm(240, mean = mean_signal, sd = sd_signal) - 
+               pnorm(210, mean = mean_signal, sd = sd_signal)
+denominator_d <- 1 - pnorm(210, mean = mean_signal, sd = sd_signal)
+prob_d <- numerator_d / denominator_d
+cat("(d) P(X < 240 | X > 210) =", prob_d, "\n")
+```
+
+## (e) Interquartile Range (IQR)
+```{r}
+q3 <- qnorm(0.75, mean = mean_signal, sd = sd_signal)
+iqr <- q3 - q1
+cat("(e) IQR =", iqr, "\n")
+```
+
+## (f) P(X < 220 | X > 210)
+```{r}
+numerator_f <- pnorm(220, mean = mean_signal, sd = sd_signal) - 
+               pnorm(210, mean = mean_signal, sd = sd_signal)
+denominator_f <- 1 - pnorm(210, mean = mean_signal, sd = sd_signal)
+prob_f <- numerator_f / denominator_f
+cat("(f) P(X < 220 | X > 210) =", prob_f, "\n")
+```
+
+## (g) P(X > 220 | X > 200)
+```{r}
+numerator_g <- 1 - pnorm(220, mean = mean_signal, sd = sd_signal)
+denominator_g <- 1 - pnorm(200, mean = mean_signal, sd = sd_signal)
+prob_g <- numerator_g / denominator_g
+cat("(g) P(X > 220 | X > 200) =", prob_g, "\n")
+```
+
+# Question 2: Downtime Analysis
+```{r}
+mean_downtime <- 25
+sd_downtime <- sqrt(144)  # Standard deviation = 12
+```
+
+## (a) 95% bounds
+```{r}
+bounds_95 <- qnorm(c(0.025, 0.975), mean = mean_downtime, sd = sd_downtime)
+cat("(2a) 95% of downtime falls between", bounds_95[1], "and", bounds_95[2], "minutes\n")
+```
+
+## (b) 90th percentile (upper bound above which 10% of downtimes fall)
+```{r}
+percentile_90 <- qnorm(0.90, mean = mean_downtime, sd = sd_downtime)
+cat("(2b) 90th percentile =", percentile_90, "minutes\n")
+```  
+
+# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/SA1.Rmd)
