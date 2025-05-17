@@ -150,3 +150,5 @@ ggplot(data, aes(x = return)) +
        x = "Returns", y = "Frequency")
 
 ```  
+
+# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/SA2.Rmd)
