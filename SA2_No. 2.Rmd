@@ -70,4 +70,4 @@ After testing the normality of Ethereum daily log returns using the Shapiro-Wilk
 
 Since the p-value is less than 0.05, the daily returns of Ethereum do **not** follow a normal distribution. This means the distribution of returns is significantly different from a normal distribution, possibly due to skewness, outliers, or fat tails. 
 
-# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/SA2.Rmd)
+# [CLICK HERE TO VIEW THE R MARKDOWN FILE ON GITHUB!!!](https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/SA2_No.%202.Rmd)
