@@ -1,0 +1,80 @@
+---
+title: "Formative Assessment 6"
+author: "Tagaytay, Gabriel L."
+date: "2025-10-27"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r github_link, echo=FALSE, results='asis'}
+cat("\\textbf{GITHUB LINK:} https://github.com/eivra-sm/APM1111/blob/main/FA3.md\n\n")
+```
+
+# Problem 9.28: 80% Confidence Interval for Mean (Internet Shoppers)
+
+# Data from Table 9.7
+```{r}
+spending <- c(
+  418, 379, 77, 212, 378,
+  363, 434, 348, 245, 341,
+  331, 356, 423, 330, 247,
+  351, 151, 220, 383, 257,
+  307, 297, 448, 391, 210,
+  158, 310, 331, 348, 124,
+  523, 356, 210, 364, 406,
+  331, 364, 352, 299, 221,
+  466, 150, 282, 221, 432,
+  366, 195, 96, 219, 202
+)
+
+# Sample size
+n <- length(spending)
+
+# Sample mean and standard deviation
+mean_spend <- mean(spending)
+sd_spend <- sd(spending)
+
+# Confidence level
+conf_level <- 0.80
+alpha <- 1 - conf_level
+
+# z critical value for 80% CI (two-tailed)
+z_crit <- qnorm(1 - alpha/2)
+
+# Standard error
+se <- sd_spend / sqrt(n)
+
+# Confidence interval
+lower <- mean_spend - z_crit * se
+upper <- mean_spend + z_crit * se
+
+# Display results
+cat("Sample size (n):", n, "\n")
+cat("Sample mean:", round(mean_spend, 3), "\n")
+cat("Sample SD:", round(sd_spend, 3), "\n")
+cat("Z critical value:", round(z_crit, 3), "\n")
+cat("80% Confidence Interval: (", round(lower, 3), ",", round(upper, 3), ")\n")
+```  
+
+The data represent the spending amounts of 50 Internet shoppers. Using RStudio, the sample mean was found to be **304.46**, and the sample standard deviation was **101.51**. 
+
+To estimate the true average spending of all Internet shoppers, an **80% confidence interval** was computed. Since the population standard deviation is unknown and the sample size is relatively large ($n = 50$), the *z*-distribution was used. 
+
+The corresponding z-critical value for an 80% confidence level is **1.282**, and the standard error is calculated as:  
+
+\[
+SE = \frac{s}{\sqrt{n}} = 14.304
+\]
+
+Substituting these into the confidence interval formula:  
+
+\[
+\bar{x} \pm z \times SE
+\]
+
+we obtain the lower and upper limits of **286.064** and **322.856**, respectively.  
+
+Therefore, we can conclude that we are **80% confident** that the true mean spending of all Internet shoppers lies between **\$286.06** and **\$322.86**. This interval provides a reasonable estimate of the average amount spent, suggesting that most online shoppers typically spend around **\$304** on average.
