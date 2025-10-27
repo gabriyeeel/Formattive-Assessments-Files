@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r github_link, echo=FALSE, results='asis'}
-cat("\\textbf{GITHUB LINK:} https://github.com/eivra-sm/APM1111/blob/main/FA3.md\n\n")
+cat("\\textbf{GITHUB LINK:} https://github.com/gabriyeeel/Formattive-Assessments-Files/blob/main/Tagaytay_FA6.Rmd")
 ```
 
 # Problem 9.28: 80% Confidence Interval for Mean (Internet Shoppers)
@@ -78,3 +78,4 @@ Substituting these into the confidence interval formula:
 we obtain the lower and upper limits of **286.064** and **322.856**, respectively.  
 
 Therefore, we can conclude that we are **80% confident** that the true mean spending of all Internet shoppers lies between **\$286.06** and **\$322.86**. This interval provides a reasonable estimate of the average amount spent, suggesting that most online shoppers typically spend around **\$304** on average.
+
