@@ -1,0 +1,387 @@
+---
+title: "Alzheimer's Mice Data Analysis - 2-Way ANOVA"
+author: "Tagaytay, Gabriel L."
+date: "2025-12-12"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    latex_engine: xelatex  # Add this line to use xelatex
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(car)
+```
+
+# Alzheimer's Mice Experiment Analysis 
+
+## Introduction  
+Mice were used in an experiment to test drugs that may prevent Alzheimer's disease. Half the mice were transgenic (genetically modified to have Alzheimer's disease) and half were wild type (not modified). Mice were assigned to one of four drug treatments and tested on memory using a maze. The number of errors made in the maze was recorded for the Training Day and Memory Day. This analysis focuses on Training Day errors using a 2-way between-subjects ANOVA.
+
+## Data Preparation
+```{r}
+# Create the data frame
+mice_data <- data.frame(
+  AD_Status = c(rep(1, 20), rep(2, 20)),
+  Treatment = c(rep(1, 5), rep(2, 5), rep(3, 5), rep(4, 5),
+                rep(1, 5), rep(2, 5), rep(3, 5), rep(4, 5)),
+  Training = c(12, 15, 13, 12, 14,
+               15, 17, 16, 17, 14,
+               13, 14, 18, 15, 16,
+               14, 13, 12, 14, 15,
+               17, 16, 17, 14, 13,
+               14, 18, 16, 17, 14,
+               13, 14, 18, 15, 16,
+               14, 13, 12, 14, 15),
+  Memory = c(10, 12, 13, 10, 13,
+             13, 13, 14, 15, 11,
+             12, 11, 15, 10, 14,
+             12, 11, 10, 13, 10,
+             9, 8, 10, 8, 8,
+             7, 10, 5, 9, 7,
+             8, 7, 9, 8, 9,
+             7, 9, 5, 8, 4)
+)
+
+# Convert to factors
+mice_data$AD_Status <- factor(mice_data$AD_Status, 
+                               levels = c(1, 2), 
+                               labels = c("Transgenic", "WildType"))
+mice_data$Treatment <- factor(mice_data$Treatment,
+                               levels = c(1, 2, 3, 4),
+                               labels = c("Drug1", "Drug2", "Drug3", "Drug4"))
+
+# Display structure
+cat("Data Structure:\n")
+str(mice_data)
+
+cat("\nFirst 10 rows:\n")
+head(mice_data, 10)
+```
+
+## Descriptive Statistics
+```{r}
+# Group statistics
+desc_stats <- mice_data %>%
+  group_by(AD_Status, Treatment) %>%
+  summarise(
+    N = n(),
+    Mean = mean(Training),
+    SD = sd(Training),
+    SE = SD/sqrt(N),
+    Min = min(Training),
+    Max = max(Training),
+    .groups = 'drop'
+  )
+
+cat("Descriptive Statistics by Group:\n")
+print(desc_stats, digits = 3)
+
+# Overall statistics
+cat("\nOverall Statistics:\n")
+cat("Total N:", nrow(mice_data), "\n")
+cat("Overall Mean:", mean(mice_data$Training), "\n")
+cat("Overall SD:", sd(mice_data$Training), "\n")
+
+# Interaction table - USING PIVOT_WIDER FROM TIDYR
+interaction_table <- mice_data %>%
+  group_by(AD_Status, Treatment) %>%
+  summarise(Mean_Training = mean(Training), .groups = 'drop') %>%
+  pivot_wider(names_from = Treatment, values_from = Mean_Training)
+
+cat("\nMean Training Errors (Interaction Table):\n")
+print(interaction_table, digits = 3)
+```
+
+## Two-Way ANOVA
+```{r}
+# Perform 2-way ANOVA
+anova_model <- aov(Training ~ AD_Status * Treatment, data = mice_data)
+anova_summary <- summary(anova_model)
+
+cat("Two-Way ANOVA Results:\n")
+print(anova_summary)
+
+# Extract ANOVA table for reporting
+anova_table <- as.data.frame(anova_summary[[1]])
+cat("\nANOVA Table (for reference):\n")
+print(anova_table, digits = 3)
+```
+
+## Effect Sizes
+```{r}
+# Calculate eta-squared
+if (!require(heplots)) {
+  install.packages("heplots")
+  library(heplots)
+}
+
+eta_sq <- etasq(anova_model, partial = FALSE)
+cat("Effect Sizes (Eta-squared):\n")
+print(eta_sq, digits = 3)
+
+# Calculate partial eta-squared
+partial_eta_sq <- etasq(anova_model, partial = TRUE)
+cat("\nPartial Eta-squared:\n")
+print(partial_eta_sq, digits = 3)
+```
+
+# Assumption Checks
+
+## Normality of Residuals
+```{r}
+# Shapiro-Wilk test
+shapiro_result <- shapiro.test(residuals(anova_model))
+cat("Shapiro-Wilk Normality Test:\n")
+print(shapiro_result)
+
+# Q-Q plot
+par(mfrow = c(1, 2))
+qqnorm(residuals(anova_model), main = "Q-Q Plot of Residuals")
+qqline(residuals(anova_model))
+hist(residuals(anova_model), main = "Histogram of Residuals", 
+     xlab = "Residuals", breaks = 10)
+par(mfrow = c(1, 1))
+```
+
+## Homogeneity of Variances
+```{r}
+# Levene's Test
+levene_result <- leveneTest(Training ~ AD_Status * Treatment, data = mice_data)
+cat("Levene's Test for Homogeneity of Variance:\n")
+print(levene_result)
+
+# Visual check
+ggplot(mice_data, aes(x = interaction(AD_Status, Treatment), 
+                      y = Training, fill = AD_Status)) +
+  geom_boxplot() +
+  labs(title = "Boxplot by Group (Checking Homogeneity)",
+       x = "Group (AD_Status × Treatment)",
+       y = "Training Day Errors") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+``` 
+
+## Independence
+Satisfied by experimental design - mice were randomly assigned to conditions.
+
+# Post-Hoc Analysis
+```{r}
+# Check if interaction is significant
+interaction_p <- anova_summary[[1]][3, "Pr(>F)"]
+cat("Interaction p-value:", interaction_p, "\n\n")
+
+if (interaction_p < 0.05) {
+  cat("Significant interaction detected. Performing simple effects analysis:\n")
+  # ADD INSTALLATION CHECK
+  if (!require(emmeans)) {
+    install.packages("emmeans")
+    library(emmeans)
+  }
+  
+  # Simple effects for AD Status at each Treatment level
+  emm_AD <- emmeans(anova_model, ~ AD_Status | Treatment)
+  cat("\nSimple Effects for AD Status within each Treatment:\n")
+  suppressWarnings(print(pairs(emm_AD, adjust = "tukey")))
+  
+  # Simple effects for Treatment at each AD Status level
+  emm_Treatment <- emmeans(anova_model, ~ Treatment | AD_Status)
+  cat("\nSimple Effects for Treatment within each AD Status:\n")
+  suppressWarnings(print(pairs(emm_Treatment, adjust = "tukey")))
+  
+} else {
+  cat("No significant interaction. Performing Tukey HSD for main effects:\n")
+  
+  # Tukey HSD for main effects
+  tukey_AD <- TukeyHSD(anova_model, "AD_Status")
+  cat("\nTukey HSD for AD Status:\n")
+  print(tukey_AD)
+  
+  tukey_Treatment <- TukeyHSD(anova_model, "Treatment")
+  cat("\nTukey HSD for Treatment:\n")
+  print(tukey_Treatment)
+}
+```
+
+# Visualization
+```{r}
+# Interaction plot
+interaction_plot <- ggplot(mice_data, 
+                           aes(x = Treatment, y = Training, 
+                               color = AD_Status, group = AD_Status)) +
+  stat_summary(fun = mean, geom = "point", size = 3) +
+  stat_summary(fun = mean, geom = "line") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.2) +
+  labs(title = "Interaction Plot: Training Day Errors",
+       subtitle = "Mean ± Standard Error",
+       x = "Drug Treatment",
+       y = "Training Day Errors",
+       color = "AD Status") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+print(interaction_plot)
+
+# Bar plot with error bars
+bar_plot <- ggplot(desc_stats, 
+                   aes(x = Treatment, y = Mean, fill = AD_Status)) +
+  geom_bar(stat = "identity", position = position_dodge(0.9)) +
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE),
+                position = position_dodge(0.9), width = 0.2) +
+  labs(title = "Mean Training Errors by Treatment and AD Status",
+       x = "Drug Treatment",
+       y = "Mean Training Day Errors",
+       fill = "AD Status") +
+  theme_minimal()
+
+print(bar_plot)
+```
+
+# Results in APA Format
+```{r}
+# Extract values for APA reporting
+F_AD <- round(as.numeric(anova_summary[[1]][1, "F value"]), 2)
+df1_AD <- anova_summary[[1]][1, "Df"]
+df2_AD <- anova_summary[[1]][4, "Df"]
+p_AD_raw <- anova_summary[[1]][1, "Pr(>F)"]
+p_AD <- ifelse(p_AD_raw < 0.001, "< .001", sprintf("%.3f", p_AD_raw))
+eta_AD <- round(as.numeric(eta_sq[1, "eta.sq"]), 3)
+
+F_Treatment <- round(as.numeric(anova_summary[[1]][2, "F value"]), 2)
+df1_Treatment <- anova_summary[[1]][2, "Df"]
+df2_Treatment <- anova_summary[[1]][4, "Df"]
+p_Treatment_raw <- anova_summary[[1]][2, "Pr(>F)"]
+p_Treatment <- ifelse(p_Treatment_raw < 0.001, "< .001", sprintf("%.3f", p_Treatment_raw))
+eta_Treatment <- round(as.numeric(eta_sq[2, "eta.sq"]), 3)
+
+F_Interaction <- round(as.numeric(anova_summary[[1]][3, "F value"]), 2)
+df1_Interaction <- anova_summary[[1]][3, "Df"]
+df2_Interaction <- anova_summary[[1]][4, "Df"]
+p_Interaction_raw <- anova_summary[[1]][3, "Pr(>F)"]
+p_Interaction <- ifelse(p_Interaction_raw < 0.001, "< .001", sprintf("%.3f", p_Interaction_raw))
+eta_Interaction <- round(as.numeric(eta_sq[3, "eta.sq"]), 3)
+
+# Means for reporting
+mean_transgenic <- mean(mice_data$Training[mice_data$AD_Status == "Transgenic"])
+sd_transgenic <- sd(mice_data$Training[mice_data$AD_Status == "Transgenic"])
+mean_wildtype <- mean(mice_data$Training[mice_data$AD_Status == "WildType"])
+sd_wildtype <- sd(mice_data$Training[mice_data$AD_Status == "WildType"])
+
+cat("=== APA FORMAT RESULTS ===\n\n")
+
+cat("A 2 (AD Status: Transgenic vs Wild Type) × 4 (Drug Treatment: Drug1, Drug2, Drug3, Drug4) between-subjects ANOVA was conducted to examine the effects on Training Day maze errors.\n\n")
+
+cat("The ANOVA revealed a ")
+if (p_AD_raw < 0.05) {
+  cat("significant")
+} else {
+  cat("non-significant")
+}
+cat(" main effect of AD Status, F(", df1_AD, ", ", df2_AD, ") = ", F_AD, 
+    ", p ", p_AD, ", η² = ", eta_AD, ". ", sep = "")
+cat("Transgenic mice (M = ", round(mean_transgenic, 2), ", SD = ", 
+    round(sd_transgenic, 2), ") ", sep = "")
+if (p_AD_raw < 0.05) {
+  cat("made significantly ")
+  if (mean_transgenic > mean_wildtype) {
+    cat("more")
+  } else {
+    cat("fewer")
+  }
+  cat(" errors than ")
+} else {
+  cat("did not differ significantly from ")
+}
+cat("wild type mice (M = ", round(mean_wildtype, 2), ", SD = ", 
+    round(sd_wildtype, 2), ").\n\n", sep = "")
+
+cat("The main effect of Treatment was ")
+if (p_Treatment_raw < 0.05) {
+  cat("significant")
+} else {
+  cat("non-significant")
+}
+cat(", F(", df1_Treatment, ", ", df2_Treatment, ") = ", F_Treatment, 
+    ", p ", p_Treatment, ", η² = ", eta_Treatment, ".\n\n", sep = "")
+
+cat("The interaction between AD Status and Treatment was ")
+if (p_Interaction_raw < 0.05) {
+  cat("significant")
+} else {
+  cat("non-significant")
+}
+cat(", F(", df1_Interaction, ", ", df2_Interaction, ") = ", F_Interaction, 
+    ", p ", p_Interaction, ", η² = ", eta_Interaction, ".\n\n", sep = "")
+
+cat("=== ASSUMPTION CHECKING ===\n\n")
+cat("Normality: Shapiro-Wilk test indicated that residuals were ")
+if (shapiro_result$p.value > 0.05) {
+  cat("normally distributed")
+} else {
+  cat("not normally distributed")
+}
+shapiro_p <- ifelse(shapiro_result$p.value < 0.001, "< .001", 
+                    sprintf("%.3f", shapiro_result$p.value))
+cat(" (W = ", round(shapiro_result$statistic, 3), ", p ", shapiro_p, ").\n\n", sep = "")
+
+cat("Homogeneity of variance: Levene's test indicated that variances were ")
+if (levene_result$`Pr(>F)`[1] > 0.05) {
+  cat("homogeneous")
+} else {
+  cat("not homogeneous")
+}
+levene_p <- ifelse(as.numeric(levene_result$`Pr(>F)`[1]) < 0.001, "< .001",
+                   sprintf("%.3f", as.numeric(levene_result$`Pr(>F)`[1])))
+cat(" (F = ", round(levene_result$`F value`[1], 2), ", p ", levene_p, ").\n\n", sep = "")
+```
+
+# Conclusion
+```{r}
+cat("=== CONCLUSION ===\n\n")
+
+if (p_AD_raw < 0.05) {
+  cat("There was a significant difference in Training Day errors between transgenic and wild type mice, ")
+  if (mean_transgenic > mean_wildtype) {
+    cat("with transgenic mice making more errors.")
+  } else {
+    cat("with wild type mice making more errors.")
+  }
+  cat("\n")
+}
+
+if (p_Treatment_raw < 0.05) {
+  cat("There were significant differences between drug treatments.\n")
+} else {
+  cat("There were no significant differences between drug treatments.\n")
+}
+
+if (p_Interaction_raw < 0.05) {
+  cat("The effect of drug treatment differed depending on AD status.\n")
+} else {
+  cat("The effect of drug treatment was consistent across AD status groups.\n")
+}
+
+cat("\nBased on these results, ")
+if (p_AD_raw < 0.05) {
+  cat("AD status significantly affects maze performance during training. ")
+}
+if (p_Treatment_raw < 0.05) {
+  cat("Different drugs have different effects on training performance. ")
+}
+if (p_Interaction_raw < 0.05) {
+  cat("Drug effectiveness depends on whether mice are transgenic or wild type.")
+}
+```
+
+# References
+Field, A., Miles, J., & Field, Z. (2012). Discovering statistics using R. Sage.
+APA Publication Manual (7th ed.)
